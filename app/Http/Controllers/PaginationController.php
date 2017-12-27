@@ -58,9 +58,7 @@ class PaginationController extends Controller
         $packet["count"] = $count[0]->rowCount;
         $totalItems = $packet["count"];
 
-        //Calculating pagination and pagination view here
-        $prev=NULL;
-        $next=NULL;
+        //Calculating pagination and pagination view here        
 
         $items_per_page = $limit;
 
@@ -76,6 +74,9 @@ class PaginationController extends Controller
 
         $next_page = ($page + 1);
 
+        ////////////This is a simple prev and next pagination////////////////////
+        $prev=NULL;
+        $next=NULL;
 
         if ($page==1) {
 
@@ -94,16 +95,10 @@ class PaginationController extends Controller
         	$next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">NEXT</a>';
         }
 
-        	/*$prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')">PREV</a>';
-        	$next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">NEXT</a>';*/
-
-        /*if ($previous_offset > 0) echo '<a href="?start='.$previous_offset.'&limit='.$items_per_page.'>prev</a>';
-
-
-		if ($next_offset <= $totalPages * $items_per_page) echo '<a href="?start='.$next_offset.'&limit='.$items_per_page.'">prev</a>';*/
-
 
         $packet["pagination_links"] = $prev.$next;
+
+        ///////////////Simple pagination ends here////////////////////////////////////////////
 
         // retrieving data as per requested offset and limit from database table
 
