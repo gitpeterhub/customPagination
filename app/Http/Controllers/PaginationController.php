@@ -49,8 +49,6 @@ class PaginationController extends Controller
             //Getting total counts form the concerned database table
 
 
-            //$last_rem_item = $offset%$totalItems>0;
-
         $sql = "SELECT COUNT(*) AS rowCount FROM users";
 
         $count = DB::select($sql);
@@ -58,7 +56,7 @@ class PaginationController extends Controller
         $packet["count"] = $count[0]->rowCount;
         $totalItems = $packet["count"];
 
-        //Calculating pagination and pagination view here        
+        //---Calculating pagination determining parameters---------------     
 
         $items_per_page = $limit;
 
@@ -74,8 +72,12 @@ class PaginationController extends Controller
 
         $next_page = ($page + 1);
 
+        //----End of pagination calculation------------------
+
+        ////---------start of two types of pagination views--------------------////////
+
         ////////////This is a simple prev and next pagination////////////////////
-        $prev=NULL;
+        /*$prev=NULL;
         $next=NULL;
 
         if ($page==1) {
@@ -96,9 +98,28 @@ class PaginationController extends Controller
         }
 
 
-        $packet["pagination_links"] = $prev.$next;
+        $packet["pagination_links"] = $prev.$next;*/
 
         ///////////////Simple pagination ends here////////////////////////////////////////////
+
+        //////////////Numbered pagination starts here//////////////////////////////////////////
+
+        /*$packet["pagination_links"] .= '<a class="badge" onclick="requestData('.($page).','.$limit.')">'.$page.'</a>';*/
+        $prev = '<a id="prev" class="badge"><<</a>';
+        $next = '<a id="next" onclick="nextBtn($(this));" class="badge">>></a>';
+        $numbered_links = "";
+
+        for($i = 1;$i <= $totalPages;$i++) 
+		{
+		    $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+		}
+
+		$packet["pagination_links"] = $prev.$numbered_links.$next;
+
+        ///////////////Numbered pagination ends here////////////////////////////////////////////
+
+
+        ///----------End of two types of pagination views----------------/////////////
 
         // retrieving data as per requested offset and limit from database table
 
