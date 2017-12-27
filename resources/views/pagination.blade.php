@@ -43,14 +43,18 @@
   <div class="row">
   	<div class="col-sm-4 col-md-offset-4">Pagination Links go here..</div>
   </div>
+  <div class="row">
+  	<div id="pagination-links" class="col-sm-4 col-md-offset-4"></div>
+  </div>
 </div>
 
 <!-- pagination script goes down here... -->
 <script type="text/javascript">
 
-	function requestData(offset=10,limit=10,filter=null){
+	function requestData(page=1,limit=10,filter=null){
+
 		console.log("is it working?");
-		data="offset="+offset+"&limit="+limit+"&filter="+filter;//+{ _token: "{{csrf_token()}}"};
+		data="page="+page+"&limit="+limit+"&filter="+filter;//+{ _token: "{{csrf_token()}}"};
 
 		$.ajaxSetup({
 		  headers: {
@@ -64,7 +68,9 @@
 			data:data,
 		}).done(function(data){
 
-		console.log(data);
+		var data = JSON.parse(data);
+		
+		$("#pagination-links").html(data["pagination_links"]);
 	});
 
 	}
