@@ -59,8 +59,8 @@ $(document).ready(function(){
 
 })
 	
-
-	function requestData(page=1,limit=10,filter=null){
+	// This script runs everytime pagination links are clicked  //////////
+	function requestData(page=1,limit=2,filter=null){
 
 		console.log("is it working?");
 		data="page="+page+"&limit="+limit+"&filter="+filter;//+{ _token: "{{csrf_token()}}"};
@@ -84,6 +84,7 @@ $(document).ready(function(){
 
 	}
 
+	// Requesting for paginated data at page load  ////////////
 	requestData();
 
 	

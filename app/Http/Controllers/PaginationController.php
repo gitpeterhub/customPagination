@@ -76,9 +76,10 @@ class PaginationController extends Controller
 
         ////---------start of two types of pagination views--------------------/////////////
 
-        ///////Type-A////This is a simple prev and next pagination/////////
         $prev=NULL;
         $next=NULL;
+
+        ///////Type-A////This is a simple prev and next pagination/////////
 
         /*if ($page==1) {
 
@@ -123,18 +124,59 @@ class PaginationController extends Controller
         }
 
         $numbered_links = "";
+        $max_pagination_number_at_a_time = 5; /// limit for pagination number view for large no of data..
 
-        for($i = 1;$i <= $totalPages;$i++) 
-		{     
-            if ($i==$page) {
+        if ($totalPages > $max_pagination_number_at_a_time) {  //////this is for large number of data...
+            
+            $i = 1;
+            $i_limiter = 0;
+            $update_i_by = floor($page/$max_pagination_number_at_a_time);
 
-                $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
-            }else{
+            if ($update_i_by > 0) {
 
-                $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                $i = ($update_i_by*$max_pagination_number_at_a_time)+1;
+                $i_limiter = $i+5;
+
+            }                   
+
+                while ( $i < $i_limiter) {
+                   
+                   if ($page%$max_pagination_number_at_a_time==0) {
+                        break;
+                    }
+
+                    if ($i==$totalPages) {
+                        break;
+                    }
+
+                    if ($i==$page) {
+
+                        $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                    }else{
+
+                        $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                    }
+
+                    $i++;
+                }  
+
+               // return "hello is this working?";      
+
+        }else{  /// this is for small number of data...
+
+            for($i = 1;$i <= $totalPages;$i++) 
+            {     
+                if ($i==$page) {
+
+                    $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                }else{
+
+                    $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                }
+                
             }
-		    
-		}
+
+        }
 
 		$packet["pagination_links"] = $prev.$numbered_links.$next;
 
