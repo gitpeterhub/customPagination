@@ -54,42 +54,11 @@
 $(document).ready(function(){
 
 	//script for numbered pagination links////////////
-	$("#pagination-links a:nth-child(2)").addClass("active");
-
-	$("#prev").on("click",function(){
-
-
-
-
-	})
-
-	/*$("#next").on("click",function(){
-
-		
-		
-	})*/
-
-	$(".badge").on("click",function(){
-
-		$(this).siblings().removeClass("active");
-		$(this).addClass("active");
-
-	})
-
-	//End of script for numbered pagination links////////////
+	$("#pagination-links a:nth-child(2)").addClass("active");	
 
 
 })
 	
-	function nextBtn(thisObj){
-
-		console.log(thisObj);
-		thisObj.siblings(".active").next().click();
-		thisObj.siblings(".active").removeClass("active");
-		thisObj.next().addClass("active");
-		
-		
-	}
 
 	function requestData(page=1,limit=10,filter=null){
 

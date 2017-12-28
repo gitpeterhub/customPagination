@@ -66,7 +66,7 @@ class PaginationController extends Controller
 
         $offset = ($page - 1) * $items_per_page;
 
-        $last_offset = ($totalPages - 1) * $items_per_page;
+        //$last_offset = ($totalPages - 1) * $items_per_page;
 
         $previous_page = ($page - 1);
 
@@ -74,13 +74,13 @@ class PaginationController extends Controller
 
         //----End of pagination calculation------------------
 
-        ////---------start of two types of pagination views--------------------////////
+        ////---------start of two types of pagination views--------------------/////////////
 
-        ////////////This is a simple prev and next pagination////////////////////
-        /*$prev=NULL;
+        ///////Type-A////This is a simple prev and next pagination/////////
+        $prev=NULL;
         $next=NULL;
 
-        if ($page==1) {
+        /*if ($page==1) {
 
         	$prev = NULL;
         	$next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">NEXT</a>';
@@ -100,26 +100,48 @@ class PaginationController extends Controller
 
         $packet["pagination_links"] = $prev.$next;*/
 
-        ///////////////Simple pagination ends here////////////////////////////////////////////
+        /////Type-A///////Simple pagination ends here/////////////////////////
 
-        //////////////Numbered pagination starts here//////////////////////////////////////////
+        ////Type-B///////Numbered pagination starts here////////////////////////
 
-        /*$packet["pagination_links"] .= '<a class="badge" onclick="requestData('.($page).','.$limit.')">'.$page.'</a>';*/
-        $prev = '<a id="prev" class="badge"><<</a>';
-        $next = '<a id="next" onclick="nextBtn($(this));" class="badge">>></a>';
+
+        if ($page==1) {
+
+            $prev = NULL;
+            $next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">>></a>';
+            
+        
+        }elseif ($page==$totalPages) {
+            $next = NULL;
+            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')"><<</a>';
+            
+            
+        }else{
+
+            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')" ><<</a>';
+            $next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')" >>></a>';
+        }
+
         $numbered_links = "";
 
         for($i = 1;$i <= $totalPages;$i++) 
-		{
-		    $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+		{     
+            if ($i==$page) {
+
+                $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+            }else{
+
+                $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+            }
+		    
 		}
 
 		$packet["pagination_links"] = $prev.$numbered_links.$next;
 
-        ///////////////Numbered pagination ends here////////////////////////////////////////////
+        /////Type-B//////Numbered pagination ends here////////////////////////
 
 
-        ///----------End of two types of pagination views----------------/////////////
+        ///----------End of two types of pagination views----------------///////////////////////////
 
         // retrieving data as per requested offset and limit from database table
 
