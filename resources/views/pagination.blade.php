@@ -13,7 +13,11 @@
 		<link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">
 		<script src="{{asset('js/jquery-3.2.1.min.js')}}"></script>
 		<script src="{{asset('js/bootstrap.min.js')}}"></script>
-
+		<style type="text/css">
+			.link-active{
+				background-color: yellow;
+			}
+		</style>
 </head>
 <body>
 	<div class="jumbotron text-center">
@@ -54,13 +58,13 @@
 $(document).ready(function(){
 
 	//script for numbered pagination links////////////
-	$("#pagination-links a:nth-child(2)").addClass("active");	
+	//$("#pagination-links a:nth-child(2)").addClass("active");	
 
 
 })
 	
 	// This script runs everytime pagination links are clicked  //////////
-	function requestData(page=1,limit=2,filter=null){
+	function requestData(page=1,limit=3,filter=null){
 
 		console.log("is it working?");
 		data="page="+page+"&limit="+limit+"&filter="+filter;//+{ _token: "{{csrf_token()}}"};

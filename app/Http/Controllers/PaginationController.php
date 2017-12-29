@@ -127,34 +127,48 @@ class PaginationController extends Controller
         $max_pagination_number_at_a_time = 5; /// limit for pagination number view for large no of data..
 
         if ($totalPages > $max_pagination_number_at_a_time) {  //////this is for large number of data...
-            
+             //return ceil(1/$max_pagination_number_at_a_time);
+
             $i = 1;
-            $i_limiter = 0;
+            $i_limiter = $max_pagination_number_at_a_time+1;
             $update_i_by = floor($page/$max_pagination_number_at_a_time);
 
-            if ($update_i_by > 0) {
+            
 
-                $i = ($update_i_by*$max_pagination_number_at_a_time)+1;
-                $i_limiter = $i+5;
+                if (($page - $update_i_by*$max_pagination_number_at_a_time) == 1) {
 
-            }                   
+                    $i = ($update_i_by*$max_pagination_number_at_a_time)+1;
+                    $i_limiter = $i+$max_pagination_number_at_a_time;
+
+                }else {
+
+                            if (($page - $update_i_by*$max_pagination_number_at_a_time) == 0) {
+                               
+                               $i = ($update_i_by*$max_pagination_number_at_a_time)+1-$max_pagination_number_at_a_time;
+
+                                $i_limiter = $i+$max_pagination_number_at_a_time;
+                            }else{
+
+                                $i = ($update_i_by*$max_pagination_number_at_a_time)+1;
+
+                                $i_limiter = $i+$max_pagination_number_at_a_time;
+                            }                        
+                        
+                    }
+               
 
                 while ( $i < $i_limiter) {
-                   
-                   if ($page%$max_pagination_number_at_a_time==0) {
-                        break;
+
+                    if ($i==$page) {
+
+                        $numbered_links .= '<a class="badge link-active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                    }else{
+
+                        $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
                     }
 
                     if ($i==$totalPages) {
                         break;
-                    }
-
-                    if ($i==$page) {
-
-                        $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
-                    }else{
-
-                        $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
                     }
 
                     $i++;
@@ -168,7 +182,7 @@ class PaginationController extends Controller
             {     
                 if ($i==$page) {
 
-                    $numbered_links .= '<a class="badge active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
+                    $numbered_links .= '<a class="badge link-active" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
                 }else{
 
                     $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
