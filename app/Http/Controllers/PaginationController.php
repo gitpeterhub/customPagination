@@ -72,6 +72,8 @@ class PaginationController extends Controller
 
         $next_page = ($page + 1);
 
+        $last_page = $totalPages;
+
         //----End of pagination calculation------------------
 
         ////---------start of two types of pagination views--------------------/////////////
@@ -105,22 +107,24 @@ class PaginationController extends Controller
 
         ////Type-B///////Numbered pagination starts here////////////////////////
 
+        $first = '<a class="badge" onclick="requestData(1,'.$limit.')">First</a>';
+        $last = '<a class="badge" onclick="requestData('.($last_page).','.$limit.')">Last</a>';
 
         if ($page==1) {
 
             $prev = NULL;
-            $next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">>></a>';
+            $next = $last.'<a class="badge" onclick="requestData('.($next_page).','.$limit.')">>></a>';
             
         
         }elseif ($page==$totalPages) {
             $next = NULL;
-            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')"><<</a>';
+            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')"><<</a>'.$first;
             
             
         }else{
 
-            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')" ><<</a>';
-            $next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')" >>></a>';
+            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')" ><<</a>'.$first;
+            $next = $last.'<a class="badge" onclick="requestData('.($next_page).','.$limit.')" >>></a>';
         }
 
         $numbered_links = "";
