@@ -23,13 +23,13 @@ class PaginationController extends Controller
 
     	//return $limit;
 
-    	$datas = $this->findAll($page,$limit);
+    	$datas = $this->paginateData($page,$limit);
 
     	echo json_encode($datas);
 
     }
 
-    public function findAll($page, $limit, $filter=NULL)
+    public function paginateData($page, $limit, $filter=NULL)
     {
 
 
@@ -56,81 +56,90 @@ class PaginationController extends Controller
         $packet["count"] = $count[0]->rowCount;
         $totalItems = $packet["count"];
 
-        //---Calculating pagination determining parameters---------------     
+    
+        //$paginatedData = $this->simplePagination($page,$limit,$totalItems);
 
-        $items_per_page = $limit;
+        $paginatedData = $this->numberedPagination($page,$limit,$totalItems);
 
-        $totalPages= ceil($totalItems / $limit);
+		$packet["pagination_links"] = $paginatedData["pagination_links"];
 
-        //$currentPage=floor($start / $limit);
+        $offset = $paginatedData['offset'];
 
-        $offset = ($page - 1) * $items_per_page;
+        // retrieving data as per requested offset and limit from database table
 
-        //$last_offset = ($totalPages - 1) * $items_per_page;
+         $sql = "SELECT * FROM users LIMIT $offset, $limit";
 
-        $previous_page = ($page - 1);
+         //Executing the sql statement and assigning in an indexed array
+        $packet["data"] = DB::select($sql);
 
-        $next_page = ($page + 1);
 
-        $last_page = $totalPages;
+        return $packet;
+    }
 
-        //----End of pagination calculation------------------
 
-        ////---------start of two types of pagination views--------------------/////////////
+    public function simplePagination($page,$limit,$totalItems){
+
+        $pagination_parameters = $this->calculatePagination($page,$limit,$totalItems);
 
         $prev=NULL;
         $next=NULL;
 
-        ///////Type-A////This is a simple prev and next pagination/////////
+        if ($page==1) {
 
-        /*if ($page==1) {
-
-        	$prev = NULL;
-        	$next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">NEXT</a>';
-        	
+            $prev = NULL;
+            $next = '<a class="badge" onclick="requestData('.$pagination_parameters["next_page"].','.$limit.')">NEXT</a>';
+            
         
-        }elseif ($page==$totalPages) {
-        	$next = NULL;
-        	$prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')">PREV</a>';
-        	
-        	
+        }elseif ($page==$pagination_parameters["totalPages"]) {
+            $next = NULL;
+            $prev = '<a class="badge" onclick="requestData('.$pagination_parameters["previous_page"].','.$limit.')">PREV</a>';
+            
+            
         }else{
 
-        	$prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')">PREV</a>';
-        	$next = '<a class="badge" onclick="requestData('.($next_page).','.$limit.')">NEXT</a>';
+            $prev = '<a class="badge" onclick="requestData('.$pagination_parameters["previous_page"].','.$limit.')">PREV</a>';
+            $next = '<a class="badge" onclick="requestData('.$pagination_parameters["next_page"].','.$limit.')">NEXT</a>';
         }
 
 
-        $packet["pagination_links"] = $prev.$next;*/
+        return [
+                "offset" => $pagination_parameters["offset"],
+                "pagination_links" => $prev.$next
+            ];
 
-        /////Type-A///////Simple pagination ends here/////////////////////////
+    }
 
-        ////Type-B///////Numbered pagination starts here////////////////////////
+    public function numberedPagination($page,$limit,$totalItems){
+
+        $pagination_parameters = $this->calculatePagination($page,$limit,$totalItems);
+
+        $prev=NULL;
+        $next=NULL;
 
         $first = '<a class="badge" onclick="requestData(1,'.$limit.')">First</a>';
-        $last = '<a class="badge" onclick="requestData('.($last_page).','.$limit.')">Last</a>';
+        $last = '<a class="badge" onclick="requestData('.$pagination_parameters["last_page"].','.$limit.')">Last</a>';
 
         if ($page==1) {
 
             $prev = NULL;
-            $next = $last.'<a class="badge" onclick="requestData('.($next_page).','.$limit.')">>></a>';
+            $next = $last.'<a class="badge" onclick="requestData('.$pagination_parameters["next_page"].','.$limit.')">>></a>';
             
         
-        }elseif ($page==$totalPages) {
+        }elseif ($page==$pagination_parameters["totalPages"]) {
             $next = NULL;
-            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')"><<</a>'.$first;
+            $prev = '<a class="badge" onclick="requestData('.$pagination_parameters["previous_page"].','.$limit.')"><<</a>'.$first;
             
             
         }else{
 
-            $prev = '<a class="badge" onclick="requestData('.($previous_page).','.$limit.')" ><<</a>'.$first;
-            $next = $last.'<a class="badge" onclick="requestData('.($next_page).','.$limit.')" >>></a>';
+            $prev = '<a class="badge" onclick="requestData('.$pagination_parameters["previous_page"].','.$limit.')" ><<</a>'.$first;
+            $next = $last.'<a class="badge" onclick="requestData('.$pagination_parameters["next_page"].','.$limit.')" >>></a>';
         }
 
         $numbered_links = "";
         $max_pagination_number_at_a_time = 5; /// limit for pagination number view for large no of data..
 
-        if ($totalPages > $max_pagination_number_at_a_time) {  //////this is for large number of data...
+        if ($pagination_parameters["totalPages"] > $max_pagination_number_at_a_time) {  //////this is for large number of data...
              //return ceil(1/$max_pagination_number_at_a_time);
 
             $i = 1;
@@ -171,7 +180,7 @@ class PaginationController extends Controller
                         $numbered_links .= '<a class="badge" onclick="requestData('.($i).','.$limit.')">'.$i.'</a>';
                     }
 
-                    if ($i==$totalPages) {
+                    if ($i==$pagination_parameters["totalPages"]) {
                         break;
                     }
 
@@ -193,24 +202,43 @@ class PaginationController extends Controller
                 }
                 
             }
-
         }
 
-		$packet["pagination_links"] = $prev.$numbered_links.$next;
+        $pagination_links = $prev.$numbered_links.$next;
 
-        /////Type-B//////Numbered pagination ends here////////////////////////
+        return [
+                "offset" => $pagination_parameters["offset"],
+                "pagination_links" => $pagination_links
+            ];
+        
+    }
 
-
-        ///----------End of two types of pagination views----------------///////////////////////////
-
-        // retrieving data as per requested offset and limit from database table
-
-         $sql = "SELECT * FROM users LIMIT $offset, $limit";
-
-         //Executing the sql statement and assigning in an indexed array
-        $packet["data"] = DB::select($sql);
+    public function calculatePagination($page,$limit,$totalItems){
 
 
-        return $packet;
+        //---Calculating pagination determining parameters---------------     
+
+        $items_per_page = $limit;
+
+        $totalPages= ceil($totalItems / $limit);
+
+        $offset = ($page - 1) * $items_per_page;
+
+        $previous_page = ($page - 1);
+
+        $next_page = ($page + 1);
+
+        $last_page = $totalPages;
+
+        //----End of pagination calculation------------------
+
+        return [
+                "offset" => $offset,
+                "totalPages" => $totalPages,
+                 "next_page" => $next_page,
+                 "previous_page" => $previous_page,
+                 "last_page" => $last_page
+             ];
+        
     }
 }

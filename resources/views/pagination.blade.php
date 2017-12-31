@@ -26,7 +26,8 @@
 </div>
 
 <div class="container">
-  <div class="row">
+
+  <div class="row" id="data-container">
     <div class="col-sm-4">
       <h3>Column 1</h3>
       <p>Lorem ipsum dolor..</p>
@@ -43,13 +44,17 @@
       <p>Ut enim ad..</p>
     </div>
   </div>
+
   <div class="clear-fix"></div>
+
   <div class="row">
   	<div class="col-sm-4 col-md-offset-4">Pagination Links go here..</div>
   </div>
+
   <div class="row">
   	<div id="pagination-links" class="col-sm-4 col-md-offset-4"></div>
   </div>
+
 </div>
 
 <!-- pagination script goes down here... -->
@@ -82,8 +87,26 @@ $(document).ready(function(){
 		}).done(function(data){
 
 		var data = JSON.parse(data);
-		
+
+		$("#data-container").empty();
+
+		$.each( data, function( key, value ) {
+		  
+		  if (key == "data") {
+		  	$.each( value, function( key1, value1 ) {
+		  	//console.log(value1);
+
+		  	$("#data-container").append('<div class="col-sm-4"><h3>'+value1["name"]+'</h3><p>'+value1["email"]+'</p><p>Ut enim ad..</p></div>');
+
+		  	});
+
+		  }
+		  
+
+		});
+
 		$("#pagination-links").html(data["pagination_links"]);
+
 	});
 
 	}
