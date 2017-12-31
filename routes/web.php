@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/pagination', 'PaginationController@index');
+
+Route::post('/pagination', 'PaginationController@list');
