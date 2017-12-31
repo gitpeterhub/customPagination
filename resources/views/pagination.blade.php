@@ -26,7 +26,12 @@
 </div>
 
 <div class="container">
-
+  
+  <div class="row">
+  	<div class="col-md-4 col-md-offset-4">
+  		<input type="text" name="search" class="form-control" id="search-box" placeholder="search for data..." />
+  	</div>
+  </div>
   <div class="row" id="data-container">
     <div class="col-sm-4">
       <h3>Column 1</h3>
@@ -71,6 +76,9 @@ $(document).ready(function(){
 	// This script runs everytime pagination links are clicked  //////////
 	function requestData(page=1,limit=3,filter=null){
 
+		//check for additonal filter parameter 
+		filter = $("#search-box").val();
+
 		console.log("is it working?");
 		data="page="+page+"&limit="+limit+"&filter="+filter;//+{ _token: "{{csrf_token()}}"};
 
@@ -91,7 +99,7 @@ $(document).ready(function(){
 		$("#data-container").empty();
 
 		if(typeof data === 'string'){
-			
+
 			$("#data-container").html('<div class="col-sm-4"><h3>'+data+'</h3></div>');
 
 		}else{
@@ -113,7 +121,7 @@ $(document).ready(function(){
 			});
 		}
 		
-
+		$("#pagination-links").html("");
 		$("#pagination-links").html(data["pagination_links"]);
 
 	});
@@ -122,6 +130,14 @@ $(document).ready(function(){
 
 	// Requesting for paginated data at page load  ////////////
 	requestData();
+
+	// search data
+	$("#search-box").on("keyup",function(){
+
+		requestData();
+
+
+	})
 
 	
 </script>
