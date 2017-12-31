@@ -90,20 +90,29 @@ $(document).ready(function(){
 
 		$("#data-container").empty();
 
-		$.each( data, function( key, value ) {
+		if(typeof data === 'string'){
+			
+			$("#data-container").html('<div class="col-sm-4"><h3>'+data+'</h3></div>');
+
+		}else{
+
+			$.each( data, function( key, value ) {
 		  
-		  if (key == "data") {
-		  	$.each( value, function( key1, value1 ) {
-		  	//console.log(value1);
+			  if (key == "data") {
 
-		  	$("#data-container").append('<div class="col-sm-4"><h3>'+value1["name"]+'</h3><p>'+value1["email"]+'</p><p>Ut enim ad..</p></div>');
+			  		$.each( value, function( key1, value1 ) {
+				  	//console.log(value1);
 
-		  	});
+				  	$("#data-container").append('<div class="col-sm-4"><h3>'+value1["name"]+'</h3><p>'+value1["email"]+'</p><p>Ut enim ad..</p></div>');
 
-		  }
-		  
+				  	});			  	
 
-		});
+			  }
+			  
+
+			});
+		}
+		
 
 		$("#pagination-links").html(data["pagination_links"]);
 

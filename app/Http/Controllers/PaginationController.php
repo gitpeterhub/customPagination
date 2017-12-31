@@ -56,6 +56,10 @@ class PaginationController extends Controller
         $packet["count"] = $count[0]->rowCount;
         $totalItems = $packet["count"];
 
+        if ($totalItems == "") {
+            return "Sorry, no data available for now!";
+        }
+
     
         //$paginatedData = $this->simplePagination($page,$limit,$totalItems);
 
